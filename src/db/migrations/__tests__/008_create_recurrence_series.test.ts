@@ -162,7 +162,7 @@ describe("migration 008_create_recurrence_series", () => {
     it("propagates the first failure and stops issuing further statements", async () => {
       const failure = new Error("permission denied for schema public");
       const query = jest
-        .fn()
+        .fn<(...args: any[]) => any>()
         .mockResolvedValueOnce({ rows: [] })
         .mockRejectedValueOnce(failure);
       const client = { query } as unknown as PoolClient;
@@ -172,7 +172,7 @@ describe("migration 008_create_recurrence_series", () => {
     });
 
     it("surfaces non-Error rejections unchanged", async () => {
-      const query = jest.fn().mockRejectedValueOnce("connection reset");
+      const query = jest.fn<(...args: any[]) => any>().mockRejectedValueOnce("connection reset");
       const client = { query } as unknown as PoolClient;
 
       await expect(migration.up(client)).rejects.toBe("connection reset");
@@ -216,7 +216,7 @@ describe("migration 008_create_recurrence_series", () => {
 
     it("does not attempt the second drop when the first fails", async () => {
       const failure = new Error("database is locked");
-      const query = jest.fn().mockRejectedValueOnce(failure);
+      const query = jest.fn<(...args: any[]) => any>().mockRejectedValueOnce(failure);
       const client = { query } as unknown as PoolClient;
 
       await expect(migration.down(client)).rejects.toBe(failure);

@@ -21,14 +21,16 @@ const actualSlotService = await import("../../services/slotService.js");
 
 jest.unstable_mockModule("../../services/slotService.js", () => ({
   ...actualSlotService,
-  slotService: { findById: jest.fn() },
+  slotService: { findById: jest.fn<(...args: any[]) => any>() },
 }));
 
 const { slotService, SlotNotFoundError } = await import("../../services/slotService.js");
 const { authorizeSlotDelete, assertSlotDeleteAllowed } = await import("../slotAuthorization.js");
 type SlotDeleteAuth = import("../slotAuthorization.js").SlotDeleteAuth;
 
-const findById = slotService.findById as unknown as jest.Mock<() => Promise<unknown>>;
+const findById = slotService.findById as unknown as jest.Mock<
+  (slotId: string) => Promise<unknown>
+>;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -72,7 +74,7 @@ function makeRes(): MockRes {
 }
 
 function makeNext(): NextFunction & jest.Mock {
-  return jest.fn() as unknown as NextFunction & jest.Mock;
+  return jest.fn<(...args: any[]) => any>() as unknown as NextFunction & jest.Mock;
 }
 
 const OWNER = "professional-1";

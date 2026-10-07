@@ -14,13 +14,13 @@ function makeReq(headers: Record<string, unknown> = {}): Request {
   return { headers } as unknown as Request;
 }
 
-function makeRes() {
+function makeRes(): Response {
   const res = {
-    status: jest.fn<Response, [number]>(),
-    json: jest.fn<Response, [unknown]>(),
+    status: jest.fn<(...args: [number]) => Response>(),
+    json: jest.fn<(...args: [unknown]) => Response>(),
   };
   res.status.mockReturnThis();
-  return res;
+  return res as unknown as Response;
 }
 
 function makeRevocationService(revoked: string[] = []): RevocationService {
@@ -41,7 +41,7 @@ describe("rejectRevokedKey", () => {
   let res: ReturnType<typeof makeRes>;
 
   beforeEach(() => {
-    next = jest.fn();
+    next = jest.fn<(...args: any[]) => any>();
     res = makeRes();
   });
 

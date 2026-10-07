@@ -40,7 +40,7 @@ function normalize(sql: string): string {
 function makeClient(impl?: (text: string, values?: unknown[]) => Promise<unknown> | unknown): {
   client: PoolClient;
   calls: RecordedQuery[];
-  query: jest.Mock;
+  query: jest.Mock<(...args: any[]) => any>;
 } {
   const calls: RecordedQuery[] = [];
   const query = jest.fn(async (text: string, values?: unknown[]) => {
@@ -53,7 +53,7 @@ function makeClient(impl?: (text: string, values?: unknown[]) => Promise<unknown
 
   const client = {
     query,
-    release: jest.fn(),
+    release: jest.fn<(...args: any[]) => any>(),
   } as unknown as PoolClient;
 
   return { client, calls, query };

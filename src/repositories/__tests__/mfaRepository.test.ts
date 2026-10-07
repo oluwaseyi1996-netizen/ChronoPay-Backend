@@ -21,7 +21,10 @@ function makeRow(overrides: Record<string, unknown> = {}) {
 }
 
 function fakeQuery(
-  handler: (sql: { text: string; params: unknown[] }) => { rows?: unknown[]; rowCount?: number },
+  handler: (sql: { text: string; params: unknown[] }) => {
+    rows?: unknown[];
+    rowCount?: number | null;
+  },
 ) {
   return async (text: string, params?: unknown[]) => {
     const out = handler({ text, params: params ?? [] });
@@ -48,11 +51,11 @@ const input = {
 
 function fakeRepository(): MfaRepository {
   return {
-    upsertEnrollment: jest.fn(),
-    findByUserId: jest.fn(),
-    markVerified: jest.fn(),
-    advanceLastUsedCounter: jest.fn(),
-    deleteByUserId: jest.fn(),
+    upsertEnrollment: jest.fn<(...args: any[]) => any>(),
+    findByUserId: jest.fn<(...args: any[]) => any>(),
+    markVerified: jest.fn<(...args: any[]) => any>(),
+    advanceLastUsedCounter: jest.fn<(...args: any[]) => any>(),
+    deleteByUserId: jest.fn<(...args: any[]) => any>(),
   };
 }
 
@@ -282,11 +285,11 @@ describe("repository singleton + test seam", () => {
 
   it("setMfaRepositoryForTests replaces the singleton with the injected instance", () => {
     const fake: MfaRepository = {
-      upsertEnrollment: jest.fn(),
-      findByUserId: jest.fn(),
-      markVerified: jest.fn(),
-      advanceLastUsedCounter: jest.fn(),
-      deleteByUserId: jest.fn(),
+      upsertEnrollment: jest.fn<(...args: any[]) => any>(),
+      findByUserId: jest.fn<(...args: any[]) => any>(),
+      markVerified: jest.fn<(...args: any[]) => any>(),
+      advanceLastUsedCounter: jest.fn<(...args: any[]) => any>(),
+      deleteByUserId: jest.fn<(...args: any[]) => any>(),
     };
     setMfaRepositoryForTests(fake);
     expect(getMfaRepository()).toBe(fake);

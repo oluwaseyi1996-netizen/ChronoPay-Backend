@@ -16,11 +16,11 @@ import type { PoolClient } from "pg";
 
 /** Build a mock PoolClient whose query() resolves successfully by default. */
 function makeMockClient(
-  queryImpl?: (sql: string) => Promise<void>,
+  queryImpl?: (sql: string) => Promise<unknown>,
 ): jest.Mocked<Pick<PoolClient, "query" | "release">> {
   return {
     query: jest.fn(queryImpl ?? (() => Promise.resolve({ rows: [], rowCount: 0, command: "", oid: 0, fields: [] }))) as any,
-    release: jest.fn(),
+    release: jest.fn<(...args: any[]) => any>(),
   };
 }
 

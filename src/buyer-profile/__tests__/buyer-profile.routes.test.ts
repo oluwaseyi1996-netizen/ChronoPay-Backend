@@ -1,3 +1,4 @@
+import { jest } from "@jest/globals";
 import express from "express";
 import request from "supertest";
 
@@ -22,7 +23,7 @@ jest.unstable_mockModule("../../middleware/auth.middleware.js", () => ({
       if (!req.user) {
         return res.status(401).json({ success: false, error: "Unauthorized" });
       }
-      if (!allowedRoles.includes(req.user.role)) {
+      if (!allowedRoles.includes(req.user.role ?? "")) {
         return res.status(403).json({ success: false, error: "Insufficient permissions" });
       }
       return next();

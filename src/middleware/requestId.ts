@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import type { NextFunction, Request, Response } from "express";
 import { runWithReqId } from "../utils/logContext.js";
 
-declare module "express" {
+declare module "express-serve-static-core" {
   interface Request {
     requestId?: string;
   }

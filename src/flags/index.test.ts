@@ -120,7 +120,7 @@ describe("src/flags/index barrel exports", () => {
 
     it("exports RolloutScheduleError as a constructable error class", () => {
       expect(typeof barrel.RolloutScheduleError).toBe("function");
-      const err = new barrel.RolloutScheduleError("test");
+      const err = new barrel.RolloutScheduleError("test", "ROLLOUT_SCHEDULE_TEST");
       expect(err).toBeInstanceOf(Error);
       expect(err.message).toBe("test");
     });

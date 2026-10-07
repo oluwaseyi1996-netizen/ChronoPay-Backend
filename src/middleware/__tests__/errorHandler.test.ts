@@ -101,7 +101,7 @@ function makeReq(
 }
 
 const makeNext = () =>
-  jest.fn() as unknown as NextFunction & jest.Mock<(...args: unknown[]) => unknown>;
+  jest.fn<(...args: any[]) => any>() as unknown as NextFunction & jest.Mock<(...args: unknown[]) => unknown>;
 
 const flush = () => new Promise<void>((resolve) => setImmediate(resolve));
 
@@ -392,7 +392,7 @@ describe("createErrorHandler", () => {
     });
     app.get(
       "/bad",
-      asyncErrorHandler(async () => {
+      asyncErrorHandler<RequestHandler>(async () => {
         throw new DatabaseError("connection pool exhausted");
       }),
     );
@@ -823,7 +823,7 @@ describe("createErrorHandler — invalid and boundary inputs", () => {
 
 describe("asyncErrorHandler", () => {
   it("returns a new 3-arity Express request handler", () => {
-    const fn = jest.fn() as unknown as RequestHandler;
+    const fn = jest.fn<(...args: any[]) => any>() as unknown as RequestHandler;
     const wrapped = asyncErrorHandler(fn);
 
     expect(wrapped).not.toBe(fn);
@@ -850,7 +850,7 @@ describe("asyncErrorHandler", () => {
 
   it("does not call next when the wrapped handler resolves", async () => {
     const next = makeNext();
-    const wrapped = asyncErrorHandler(async () => "resolved");
+    const wrapped = asyncErrorHandler<RequestHandler>(async () => "resolved");
 
     wrapped(makeReq(), makeRes(), next);
     await flush();
@@ -871,7 +871,7 @@ describe("asyncErrorHandler", () => {
   it("forwards a rejected promise to next exactly once", async () => {
     const next = makeNext();
     const err = new NotFoundError("Booking not found");
-    const wrapped = asyncErrorHandler(async () => {
+    const wrapped = asyncErrorHandler<RequestHandler>(async () => {
       throw err;
     });
 
@@ -884,7 +884,7 @@ describe("asyncErrorHandler", () => {
 
   it("forwards the rejection asynchronously, never synchronously", () => {
     const next = makeNext();
-    const wrapped = asyncErrorHandler(async () => {
+    const wrapped = asyncErrorHandler<RequestHandler>(async () => {
       throw new BadRequestError("bad field");
     });
 
@@ -895,7 +895,7 @@ describe("asyncErrorHandler", () => {
 
   it("forwards non-Error rejection values unchanged", async () => {
     const next = makeNext();
-    const wrapped = asyncErrorHandler(async () => {
+    const wrapped = asyncErrorHandler<RequestHandler>(async () => {
       throw "string failure";
     });
 
@@ -950,7 +950,7 @@ describe("asyncErrorHandler", () => {
 
   it("keeps repeated invocations independent", async () => {
     const next = makeNext();
-    const wrapped = asyncErrorHandler(async () => {
+    const wrapped = asyncErrorHandler<RequestHandler>(async () => {
       throw new ConflictError("Slot already booked");
     });
 
@@ -1005,13 +1005,13 @@ function createHarness(options: ErrorHandlerOptions = {}): express.Express {
   });
   app.get(
     "/async-app-error",
-    asyncErrorHandler(async () => {
+    asyncErrorHandler<RequestHandler>(async () => {
       throw new NotFoundError("Booking not found");
     }),
   );
   app.get(
     "/async-unknown-error",
-    asyncErrorHandler(async () => {
+    asyncErrorHandler<RequestHandler>(async () => {
       throw new Error("postgres://chronopay:hunter2@db.internal:5432/chronopay");
     }),
   );
@@ -1109,7 +1109,11 @@ describe("errorHandler + notFoundMiddleware over Express", () => {
 
 describe("createErrorHandler — deterministic timestamps", () => {
   const FIXED = new Date("2024-01-02T03:04:05.678Z");
-  const NOT_DATE = [
+  type FakeTimersArg = NonNullable<Parameters<typeof jest.useFakeTimers>[0]>;
+  type DoNotFake = NonNullable<
+    Extract<FakeTimersArg, { doNotFake?: unknown }>["doNotFake"]
+  >;
+  const NOT_DATE: DoNotFake = [
     "setTimeout",
     "clearTimeout",
     "setInterval",

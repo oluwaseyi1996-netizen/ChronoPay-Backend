@@ -1,9 +1,9 @@
 import { AppError, BadRequestError, ValidationError, isAppError, getStatusCode } from '../../errors/AppError.js';
-import { ERROR_CODES } from '../../errors/errorCodes.js';
+import { ERROR_CODES, type I18nMessageKey } from '../../errors/errorCodes.js';
 
 describe('AppError and related classes', () => {
   test('AppError toJSON produces correct envelope', () => {
-    const err = new AppError('Something went wrong', 418, 'CUSTOM_ERROR', true, { info: 'detail' }, 'some.key');
+    const err = new AppError('Something went wrong', 418, 'CUSTOM_ERROR', true, { info: 'detail' }, 'some.key' as I18nMessageKey);
     const envelope = err.toJSON();
     expect(envelope).toMatchObject({
       success: false,
@@ -26,7 +26,7 @@ describe('AppError and related classes', () => {
   });
 
   test('ValidationError inherits correctly', () => {
-    const valErr = new ValidationError('Invalid data', { field: 'name' }, 'validation.key');
+    const valErr = new ValidationError('Invalid data', { field: 'name' }, 'validation.key' as I18nMessageKey);
     expect(valErr.statusCode).toBe(ERROR_CODES.VALIDATION_ERROR.status);
     expect(valErr.code).toBe(ERROR_CODES.VALIDATION_ERROR.code);
     expect(valErr.isPublic()).toBe(true);
