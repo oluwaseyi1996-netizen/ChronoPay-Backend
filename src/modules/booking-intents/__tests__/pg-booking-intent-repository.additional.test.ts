@@ -1,7 +1,8 @@
+import { jest } from "@jest/globals";
 import { PgBookingIntentRepository } from "../pg-booking-intent-repository.js";
 
 describe('PgBookingIntentRepository additional edge cases', () => {
-  let mockQuery: jest.Mock;
+  let mockQuery: jest.Mock<(...args: any[]) => any>;
   let repo: PgBookingIntentRepository;
 
   beforeEach(() => {
