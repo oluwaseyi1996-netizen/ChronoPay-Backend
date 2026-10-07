@@ -30,7 +30,7 @@ const sqlText = (statements: string[]): string => statements.join("\n");
 describe("migration 014 add_reputation_bootstrap_columns", () => {
   describe("registry contract", () => {
     it("exposes the id/name consumed by the migration registry", () => {
-      expect(migration.id).toBe("018");
+      expect(migration.id).toBe("019");
       expect(migration.name).toBe("add_reputation_bootstrap_columns");
     });
   });

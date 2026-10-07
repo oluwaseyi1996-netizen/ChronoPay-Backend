@@ -15,7 +15,7 @@ function normalizedQuery(query: jest.MockedFunction<Query>, index: number): stri
 
 describe("migration 017 add_grace_window_config", () => {
   it("exposes the expected migration identity", () => {
-    expect(migration.id).toBe("017");
+    expect(migration.id).toBe("022");
     expect(migration.name).toBe("add_grace_window_config");
   });
 

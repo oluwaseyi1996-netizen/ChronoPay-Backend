@@ -65,7 +65,7 @@ describe("migration 019 — add_active_booking_intent_unique_idx", () => {
 
   describe("migration metadata", () => {
     it("keeps the registered id and name stable", () => {
-      expect(migration.id).toBe("019");
+      expect(migration.id).toBe("024");
       expect(migration.name).toBe("add_active_booking_intent_unique_idx");
     });
 
